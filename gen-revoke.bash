@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# (c) 2019 Michał Górny
+# Released under the terms of the 2-clause BSD license
 
 # die <message>...
 # Print the message and exit unsuccessfully.
