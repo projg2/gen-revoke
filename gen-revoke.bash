@@ -13,9 +13,18 @@ die() {
 fill_key_ids() {
 	local key_id=${1}
 	local l fpr
+	local skip_next=0
 
 	while read -r l; do
-		if [[ ${l} == fpr:* ]]; then
+		if [[ ${l} == sub:r:* ]]; then
+			# subkey already revoked
+			skip_next=1
+		elif [[ ${l} == fpr:* ]]; then
+			if [[ ${skip_next} == 1 ]]; then
+				skip_next=0
+				continue
+			fi
+
 			fpr=${l#fpr:::::::::}
 			fpr=${fpr%:}
 			[[ ${#fpr} == 40 ]] || die "Invalid fingerprint: ${l}"
