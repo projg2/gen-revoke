@@ -16,9 +16,12 @@ fill_key_ids() {
 	local key_id=${1}
 	local l fpr
 	local skip_next=0
+	local key_count=0
 
 	while read -r l; do
-		if [[ ${l} == sub:r:* ]]; then
+		if [[ ${l} == pub:* ]]; then
+			(( key_count++ ))
+		elif [[ ${l} == sub:r:* ]]; then
 			# subkey already revoked
 			skip_next=1
 		elif [[ ${l} == fpr:* ]]; then
@@ -34,6 +37,8 @@ fill_key_ids() {
 		fi
 	done < <(gpg --with-colons --list-keys "${key_id}" ||
 		die "gpg failed (invalid key id?)")
+
+	[[ ${key_count} == 1 ]] || die "${key_id} matched ${key_count} keys!"
 }
 
 # make_gpghome <key-id>
